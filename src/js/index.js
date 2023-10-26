@@ -2,6 +2,7 @@ import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { SearchService } from './SearchService';
+import axios from 'axios';
 
 const elements = {
   form: document.querySelector('.search-form'),
@@ -20,7 +21,7 @@ elements.btnLoadMore.addEventListener('click', loadMoreBotton);
 async function handlSubmit(evt) {
   evt.preventDefault();
   elements.cardList.innerHTML = '';
-  elements.btnLoadMore.classList.replace('load-mode', 'load-more-hidden');
+  elements.btnLoadMore.style.display = 'none';
   currentPage = 1;
 
   const searchQuery = evt.target.elements.searchQuery.value;
@@ -44,7 +45,7 @@ async function handlSubmit(evt) {
     }
 
     if (data.totalHits > quantityImg) {
-      elements.btnLoadMore.classList.replace('load-more-hidden', 'load-more');
+      elements.btnLoadMore.style.display = 'block';
     }
     const galleryElement = document.querySelector('.gallery');
     if (galleryElement) {
@@ -78,8 +79,8 @@ async function loadMoreBotton() {
     const cardsCreate = cardListMarkup(data.hits);
     elements.cardList.insertAdjacentHTML('beforeend', cardsCreate);
 
-    if (data.totalHits <= quantityImg) {
-      elements.btnLoadMore.classList.replace('load-more', 'load-more-hidden');
+    if (data.hits.length < 40) {
+      elements.btnLoadMore.style.display = 'none';
       Notify.info("Sorry, but you've reached the end of search results.");
     }
   } catch (error) {
